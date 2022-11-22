@@ -1,3 +1,5 @@
+const { faker } = require('@faker-js/faker')
+
 const { UserCreateController } = require('../../../src/controllers')
 const { PasswordEncrypter } = require('../../../src/utils')
 
@@ -16,8 +18,8 @@ describe('UserCreateController', function () {
   })
 
   it('should return user if valid data', function () {
-    const username = 'info@domingollanes.me',
-      password = '123456'
+    const username = faker.internet.email(),
+      password = faker.internet.password()
 
     const controller = new UserCreateController(userRepositoryMock,
       passwordEncrypter)
@@ -46,8 +48,8 @@ describe('UserCreateController', function () {
   })
 
   it('should return error 422 if not valid data', function () {
-    const username = 'infodomingollanes.me',
-      password = '123456'
+    const username = faker.random.word(),
+      password = faker.internet.password()
 
     const controller = new UserCreateController(userRepositoryMock,
       passwordEncrypter)
@@ -68,8 +70,8 @@ describe('UserCreateController', function () {
   })
 
   it('should return error 500 if save fails', function () {
-    const username = 'info@domingollanes.me',
-      password = '123456'
+    const username = faker.internet.email(),
+      password = faker.internet.password()
 
     const errorUserRepositoryMock = userRepositoryMock
     errorUserRepositoryMock.save.mockImplementationOnce(

@@ -3,19 +3,35 @@ const { User } = require('../../../src/models')
 const { InvalidArgumentException } = require('../../../src/exceptions')
 
 describe('User Model', function () {
-  it('should return instance of User on create', function () {
-    const user = User.create(createUuid(), 'info@domingollanes.me', '123456')
+  const validUserNames = [
+    'info@domingollanes.me',
+    'domingo@gmail.com',
+    'info+test@domingollanes.me',
+  ]
 
-    expect(user).toBeInstanceOf(User)
-  })
+  const invalidUserNames = [
+    { username: 'infodomingollanes.me' },
+    { username: 'domingo@gmailcom' },
+    { username: 'info+test@domingollanes._me' },
+  ]
 
-  it('should throw an InvalidArgumentException error if email is not valid',
-    function () {
-      expect(() => { User.create(createUuid(), 'any', '123456') }).
+  it.each(validUserNames)(
+    'should return an instance of User with username %s',
+    (username) => {
+      const user = User.create(createUuid(), username, '123456')
+
+      expect(user).toBeInstanceOf(User)
+    })
+
+  it.each(invalidUserNames)(
+    'should throw an InvalidArgumentException error if username is $username',
+    ({ username }) => {
+      expect(
+        () => { User.create(createUuid(), username, '123456') }).
         toThrow(InvalidArgumentException)
 
       try {
-        User.create(createUuid(), 'any', '123456')
+        User.create(createUuid(), username, '123456')
       } catch (error) {
         expect(error).toBeInstanceOf(InvalidArgumentException)
       }
